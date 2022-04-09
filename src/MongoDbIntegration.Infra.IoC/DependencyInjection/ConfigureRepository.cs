@@ -15,6 +15,7 @@ namespace MongoDbIntegration.Infra.IoC.DependencyInjection
             services.Configure<MongoDbSettings>(configuration.GetSection("MongoDbSettings"));
             services.AddSingleton<IMongoDbSettings>(serviceProvider => serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value);
             services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            services.AddScoped<IProductRepository, ProductRepository>();
 
             return services;
         }

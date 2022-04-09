@@ -8,10 +8,10 @@ namespace MongoDbIntegration.Application.Core.Products.Handlers.Commands
 {
     public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, GenericResponse>
     {
-        private readonly IBaseRepository<Product> _productRepository;
+        private readonly IProductRepository _productRepository;
         private readonly NotificationContext _notification;
 
-        public CreateProductCommandHandler(IBaseRepository<Product> productRepository, NotificationContext notification)
+        public CreateProductCommandHandler(IProductRepository productRepository, NotificationContext notification)
         {
             _productRepository = productRepository;
             _notification = notification;
