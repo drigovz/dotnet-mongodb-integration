@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Configurations>Debug;Release;</Configurations>
+        <Platforms>AnyCPU</Platforms>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Controllers\WeatherForecastController.cs" />
+      <Compile Remove="WeatherForecast.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MongoDbIntegration.Infra.IoC\MongoDbIntegration.Infra.IoC.csproj" />
+    </ItemGroup>
+
+</Project>
