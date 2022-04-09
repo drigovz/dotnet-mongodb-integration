@@ -18,24 +18,19 @@ namespace MongoDbIntegration.Infra.Data.Repository
             _settings = settings;
 
             var database = new MongoClient(settings.ConnectionString).GetDatabase(settings.DatabaseName);
-            _collection = database.GetCollection<TDocument>(GetCollectionName(typeof(TDocument)));
+            _collection = database.GetCollection<TDocument>(BaseRepository<TDocument>.GetCollectionName(typeof(TDocument)));
         }
 
-        private protected string GetCollectionName(Type documentType)
-        {
-            return ((BsonCollectionAttribute)documentType.GetCustomAttributes(
-                    typeof(BsonCollectionAttribute),
-                    true)
-                .FirstOrDefault())?.CollectionName;
-        }
+        private protected static string GetCollectionName(Type documentType) =>
+            ((BsonCollectionAttribute)documentType
+              .GetCustomAttributes(typeof(BsonCollectionAttribute), true)
+              .FirstOrDefault()
+            )?.CollectionName;
 
-        public virtual IQueryable<TDocument> AsQueryable()
-        {
-            return _collection.AsQueryable();
-        }
+        public virtual IQueryable<TDocument> AsQueryable() =>
+            _collection.AsQueryable();
 
-        public virtual IEnumerable<TDocument> FilterBy(
-            Expression<Func<TDocument, bool>> filterExpression)
+        public virtual IEnumerable<TDocument> FilterBy(Expression<Func<TDocument, bool>> filterExpression)
         {
             return _collection.Find(filterExpression).ToEnumerable();
         }

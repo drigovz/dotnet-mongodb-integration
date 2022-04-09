@@ -13,7 +13,7 @@ namespace MongoDbIntegration.Domain.Entities
         [Key]
         [BsonId]
         [BsonRepresentation(BsonType.String)]
-        public ObjectId Id { get; private set; }
+        public ObjectId Id { get; private set; } = ObjectId.GenerateNewId();
         
         private DateTime? _createdAt;
         public DateTime? CreatedAt
