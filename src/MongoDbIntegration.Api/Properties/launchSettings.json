@@ -1,15 +1,23 @@
-﻿{
+{
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
     "MongoDbIntegration.Api": {
       "commandName": "Project",
-      "dotnetRunMessages": false,
-      "launchBrowser": false,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7089;http://localhost:5089",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Local"
-      }
+      },
+      "applicationUrl": "https://localhost:7089;http://localhost:5089",
+      "dotnetRunMessages": false
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "launchUrl": "https://localhost:7089/swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Local",
+        "ASPNETCORE_URLS": "https://localhost:7089;http://localhost:5089"
+      },
+      "distributionName": ""
     }
   }
 }

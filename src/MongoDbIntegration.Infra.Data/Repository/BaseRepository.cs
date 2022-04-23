@@ -42,21 +42,9 @@ namespace MongoDbIntegration.Infra.Data.Repository
             return _collection.Find(filterExpression).Project(projectionExpression).ToEnumerable();
         }
 
-        public virtual TDocument FindOne(Expression<Func<TDocument, bool>> filterExpression)
-        {
-            return _collection.Find(filterExpression).FirstOrDefault();
-        }
-
         public virtual Task<TDocument> FindOneAsync(Expression<Func<TDocument, bool>> filterExpression)
         {
             return Task.Run(() => _collection.Find(filterExpression).FirstOrDefaultAsync());
-        }
-
-        public virtual TDocument FindById(string id)
-        {
-            var objectId = new ObjectId(id);
-            var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, objectId);
-            return _collection.Find(filter).SingleOrDefault();
         }
 
         public virtual Task<TDocument> FindByIdAsync(string id)
@@ -69,32 +57,21 @@ namespace MongoDbIntegration.Infra.Data.Repository
             });
         }
 
-
-        public virtual void InsertOne(TDocument document)
+        public Task? InsertOneAsync(TDocument document)
         {
-            _collection.InsertOne(document);
+            try
+            {
+                return Task.Run(() => _collection.InsertOneAsync(document));
+            }
+            catch
+            {
+                return null;
+            }
         }
-
-        public virtual Task InsertOneAsync(TDocument document)
-        {
-            return Task.Run(() => _collection.InsertOneAsync(document));
-        }
-
-        public void InsertMany(ICollection<TDocument> documents)
-        {
-            _collection.InsertMany(documents);
-        }
-
 
         public virtual async Task InsertManyAsync(ICollection<TDocument> documents)
         {
             await _collection.InsertManyAsync(documents);
-        }
-
-        public void ReplaceOne(TDocument document)
-        {
-            var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, document.Id);
-            _collection.FindOneAndReplace(filter, document);
         }
 
         public virtual async Task ReplaceOneAsync(TDocument document)
@@ -103,21 +80,9 @@ namespace MongoDbIntegration.Infra.Data.Repository
             await _collection.FindOneAndReplaceAsync(filter, document);
         }
 
-        public void DeleteOne(Expression<Func<TDocument, bool>> filterExpression)
-        {
-            _collection.FindOneAndDelete(filterExpression);
-        }
-
         public Task DeleteOneAsync(Expression<Func<TDocument, bool>> filterExpression)
         {
             return Task.Run(() => _collection.FindOneAndDeleteAsync(filterExpression));
-        }
-
-        public void DeleteById(string id)
-        {
-            var objectId = new ObjectId(id);
-            var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, objectId);
-            _collection.FindOneAndDelete(filter);
         }
 
         public Task DeleteByIdAsync(string id)
@@ -128,11 +93,6 @@ namespace MongoDbIntegration.Infra.Data.Repository
                 var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, objectId);
                 _collection.FindOneAndDeleteAsync(filter);
             });
-        }
-
-        public void DeleteMany(Expression<Func<TDocument, bool>> filterExpression)
-        {
-            _collection.DeleteMany(filterExpression);
         }
 
         public Task DeleteManyAsync(Expression<Func<TDocument, bool>> filterExpression)

@@ -19,23 +19,34 @@ namespace MongoDbIntegration.Application.Core.Products.Handlers.Commands
 
         public async Task<GenericResponse> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            var product = new Product(request.Title, request.Description, request.Price, request.Active);
-            if (!product.Valid)
+            try
             {
-                _notification.AddNotifications(product.ValidationResult);
+                var product = new Product(request.Title, request.Description, request.Price, request.Active);
+                if (!product.Valid)
+                {
+                    _notification.AddNotifications(product.ValidationResult);
+
+                    return new GenericResponse { Notifications = _notification.Notifications, };
+                }
+
+                var result = _productRepository.FindOneAsync(x => x.Title.ToLower() == product.Title.ToLower())?.Result;
+                if (result == null)
+                    await _productRepository.InsertOneAsync(product);
+                else
+                {
+                    _notification.AddNotification("Error", $"Product with title: '{product.Title}' already exists!");
+
+                    return new GenericResponse { Notifications = _notification.Notifications, };
+                }
+
+                return new GenericResponse { Result = "ok", };
+            }
+            catch (Exception ex)
+            {
+                _notification.AddNotification("Error", ex.Message);
 
                 return new GenericResponse { Notifications = _notification.Notifications, };
             }
-
-            await _productRepository.InsertOneAsync(product);
-            //if (result == null)
-            //{
-            //    _notification.AddNotification("Error", "Error when try to add new Product");
-
-            //    return new GenericResponse { Notifications = _notification.Notifications, };
-            //}
-
-            return new GenericResponse { Result = "ok", };
         }
     }
 }
