@@ -20,5 +20,9 @@ namespace MongoDbIntegration.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateProductCommand request)
             => Ok(await _mediator.Send(request));
+
+        [HttpDelete]
+        public async Task<IActionResult> Remove([FromBody] RemoveProductCommand request)
+            => Ok(await _mediator.Send(request));
     }
 }

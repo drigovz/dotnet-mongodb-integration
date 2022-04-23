@@ -80,7 +80,7 @@ namespace MongoDbIntegration.Infra.Data.Repository
             await _collection.FindOneAndReplaceAsync(filter, document);
         }
 
-        public Task DeleteOneAsync(Expression<Func<TDocument, bool>> filterExpression)
+        public Task<TDocument?> DeleteOneAsync(Expression<Func<TDocument, bool>> filterExpression)
         {
             return Task.Run(() => _collection.FindOneAndDeleteAsync(filterExpression));
         }

@@ -23,7 +23,7 @@ namespace MongoDbIntegration.Domain.Interfaces.Repository
 
         Task ReplaceOneAsync(TDocument document);
 
-        Task DeleteOneAsync(Expression<Func<TDocument, bool>> filterExpression);
+        Task<TDocument?> DeleteOneAsync(Expression<Func<TDocument, bool>> filterExpression);
 
         Task DeleteByIdAsync(string id);
 
