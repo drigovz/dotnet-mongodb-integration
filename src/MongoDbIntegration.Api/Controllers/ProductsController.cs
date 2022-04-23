@@ -24,5 +24,13 @@ namespace MongoDbIntegration.Api.Controllers
         [HttpDelete]
         public async Task<IActionResult> Remove([FromBody] RemoveProductCommand request)
             => Ok(await _mediator.Send(request));
+
+        [HttpPatch]
+        public async Task<IActionResult> Update([FromBody] UpdateProductCommand request)
+        {
+            HttpContext.Response.ContentType = "application/json";
+            HttpContext.Response.StatusCode = 200; 
+            return Ok(await _mediator.Send(request));
+        }
     }
 }

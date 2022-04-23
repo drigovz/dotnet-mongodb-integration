@@ -71,13 +71,28 @@ namespace MongoDbIntegration.Infra.Data.Repository
 
         public virtual async Task InsertManyAsync(ICollection<TDocument> documents)
         {
-            await _collection.InsertManyAsync(documents);
+            try
+            {
+                await _collection.InsertManyAsync(documents);
+            }
+            catch (Exception ex)
+            {
+                await Task.FromException<MongoCommandException>(ex);
+            }
         }
 
         public virtual async Task ReplaceOneAsync(TDocument document)
         {
-            var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, document.Id);
-            await _collection.FindOneAndReplaceAsync(filter, document);
+            try
+            {
+                var g = await FindByIdAsync(document.Id.ToString());
+
+                Task.Run(() => _collection.FindOneAndReplaceAsync(b => b.Id.ToString() == document.Id.ToString(), document));
+            }
+            catch (Exception ex)
+            {
+                await Task.FromException<MongoCommandException>(ex);
+            }
         }
 
         public Task<TDocument?> DeleteOneAsync(Expression<Func<TDocument, bool>> filterExpression)
