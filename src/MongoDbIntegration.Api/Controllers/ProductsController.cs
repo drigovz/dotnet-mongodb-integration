@@ -33,5 +33,9 @@ namespace MongoDbIntegration.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll() =>
             Ok(await _mediator.Send(new ListProductsQuery()));
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById([FromRoute] string id) =>
+            Ok(await _mediator.Send(new GetProductQuery { Id = id }));
     }
 }

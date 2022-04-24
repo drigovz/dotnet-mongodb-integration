@@ -8,7 +8,7 @@ namespace MongoDbIntegration.Application.Core.Products.Validators
     {
         public UpdateProductCommandValidator()
         {
-            RuleFor(x => x.Id).Title();
+            RuleFor(x => x.Id).NotEmpty().NotNull();
             RuleFor(x => x.Title).Title();
             RuleFor(x => x.Price).NotEmpty().NotEqual(0);
         }
