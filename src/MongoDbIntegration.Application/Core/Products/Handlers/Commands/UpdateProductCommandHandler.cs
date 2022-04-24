@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using MongoDbIntegration.Application.Core.Products.Commands;
+using MongoDbIntegration.Application.Core.Products.Queries;
 using MongoDbIntegration.Application.Notifications;
 using MongoDbIntegration.Domain.Interfaces.Repository;
 
@@ -8,11 +9,13 @@ namespace MongoDbIntegration.Application.Core.Products.Handlers.Commands
     public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, GenericResponse>
     {
         private readonly IProductRepository _productRepository;
+        private readonly IMediator _mediator;
         private readonly NotificationContext _notification;
 
-        public UpdateProductCommandHandler(IProductRepository productRepository, NotificationContext notification)
+        public UpdateProductCommandHandler(IProductRepository productRepository, IMediator mediator, NotificationContext notification)
         {
             _productRepository = productRepository;
+            _mediator = mediator;
             _notification = notification;
         }
 
@@ -20,15 +23,12 @@ namespace MongoDbIntegration.Application.Core.Products.Handlers.Commands
         {
             try
             {
-                var product = _productRepository.FindByIdAsync(request.Id.ToString())?.Result;
-                if (product == null)
+                var product = await _mediator.Send(new GetProductQuery
                 {
-                    _notification.AddNotification("Error", $"Product with Id: '{request.Id}' not found!");
+                    Id = request.Id,
+                });
 
-                    return new GenericResponse { Notifications = _notification.Notifications, };
-                }
-
-                var updateProduct = product.Update(
+                var updateProduct = product?.Result?.Update(
                         request.Title,
                         request.Description,
                         request.Price,
