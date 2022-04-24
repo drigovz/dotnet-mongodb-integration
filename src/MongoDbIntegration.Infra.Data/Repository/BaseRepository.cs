@@ -85,9 +85,7 @@ namespace MongoDbIntegration.Infra.Data.Repository
         {
             try
             {
-                var g = await FindByIdAsync(document.Id.ToString());
-
-                Task.Run(() => _collection.FindOneAndReplaceAsync(b => b.Id.ToString() == document.Id.ToString(), document));
+                await _collection.ReplaceOneAsync(x => x.Id == document.Id, document);
             }
             catch (Exception ex)
             {

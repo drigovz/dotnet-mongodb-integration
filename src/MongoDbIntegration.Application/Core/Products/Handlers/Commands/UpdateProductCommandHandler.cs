@@ -28,7 +28,14 @@ namespace MongoDbIntegration.Application.Core.Products.Handlers.Commands
                     return new GenericResponse { Notifications = _notification.Notifications, };
                 }
 
-                var result = _productRepository.ReplaceOneAsync(product);
+                var updateProduct = product.Update(
+                        request.Title,
+                        request.Description,
+                        request.Price,
+                        request.Active
+                    );
+
+                var result = _productRepository.ReplaceOneAsync(updateProduct);
                 if (result?.Exception != null)
                 {
                     _notification.AddNotification("Error", result?.Exception?.Message);
@@ -38,7 +45,7 @@ namespace MongoDbIntegration.Application.Core.Products.Handlers.Commands
 
                 return new GenericResponse
                 {
-                    Result = "ok",
+                    Result = updateProduct,
                 };
             }
             catch (Exception ex)
