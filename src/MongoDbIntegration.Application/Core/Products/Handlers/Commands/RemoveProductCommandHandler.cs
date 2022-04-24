@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using MongoDbIntegration.Application.Core.Products.Commands;
+using MongoDbIntegration.Application.Core.Products.Queries;
 using MongoDbIntegration.Application.Notifications;
 using MongoDbIntegration.Domain.Interfaces.Repository;
 
@@ -8,11 +9,13 @@ namespace MongoDbIntegration.Application.Core.Products.Handlers.Commands
     public class RemoveProductCommandHandler : IRequestHandler<RemoveProductCommand, GenericResponse>
     {
         private readonly IProductRepository _productRepository;
+        private readonly IMediator _mediator;
         private readonly NotificationContext _notification;
 
-        public RemoveProductCommandHandler(IProductRepository productRepository, NotificationContext notification)
+        public RemoveProductCommandHandler(IProductRepository productRepository, IMediator mediator, NotificationContext notification)
         {
             _productRepository = productRepository;
+            _mediator = mediator;
             _notification = notification;
         }
 
@@ -22,8 +25,12 @@ namespace MongoDbIntegration.Application.Core.Products.Handlers.Commands
             {
                 var title = request.Title.ToLower();
 
-                var product = _productRepository.FindOneAsync(x => x.Title.ToLower() == title)?.Result;
-                if (product == null)
+                var product = await _mediator.Send(new GetProductByTitleQuery
+                {
+                    Title = request.Title,
+                });
+
+                if (product?.Result == null)
                 {
                     _notification.AddNotification("Error", $"Product with title: '{title}' not found!");
 
